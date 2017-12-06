@@ -356,8 +356,6 @@ inline size_t thread_id()
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 #define SPDLOG_FILENAME_T(s) L ## s
-#define SPDLOG_TRUNCATE_MODE SPDLOG_FILENAME_T("wbN")
-#define SPDLOG_APPEND_MODE SPDLOG_FILENAME_T("abN")
 inline std::string filename_to_str(const filename_t& filename)
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
@@ -365,12 +363,18 @@ inline std::string filename_to_str(const filename_t& filename)
 }
 #else
 #define SPDLOG_FILENAME_T(s) s
-#define SPDLOG_TRUNCATE_MODE SPDLOG_FILENAME_T("wb")
-#define SPDLOG_APPEND_MODE SPDLOG_FILENAME_T("ab")
 inline std::string filename_to_str(const filename_t& filename)
 {
     return filename;
 }
+#endif
+
+#if defined(_WIN32)
+#define SPDLOG_TRUNCATE_MODE SPDLOG_FILENAME_T("wbN")
+#define SPDLOG_APPEND_MODE SPDLOG_FILENAME_T("abN")
+#else
+#define SPDLOG_TRUNCATE_MODE SPDLOG_FILENAME_T("wb")
+#define SPDLOG_APPEND_MODE SPDLOG_FILENAME_T("ab")
 #endif
 
 inline std::string errno_to_string(char[256], char* res)
